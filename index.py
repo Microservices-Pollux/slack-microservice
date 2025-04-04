@@ -30,7 +30,7 @@ def hello_command(ack, body):
 
 @app.command("/form")
 def form_command(ack, body, command, say):
-    ack("Form command received!")
+    ack()
     say(
         blocks=[
             {
@@ -38,31 +38,90 @@ def form_command(ack, body, command, say):
                 "text": {"type": "mrkdwn", "text": f"Hey there <@{command['user_name']}>!"},
                 "accessory": {
                     "type": "button",
-                    "text": {"type": "plain_text", "text": "Click Me"},
+                    "text": {"type": "plain_text", "text": "Open Modal Form"},
                     "action_id": "button_click"
                 }
             }
         ],
-        text=f"Hey there <@{command['user_name']}>!"
     )
 
 
 @app.action("button_click")
-def handle_button_click(ack, body, say):
+def handle_button_click(ack, body, client):
     ack()
-    user_id = body["user"]["id"]
-    say(f"Button clicked by <@{user_id}>!")
+    client.views_open(
+        trigger_id=body["trigger_id"],
+        view={
+            "type": "modal",
+            "callback_id": "view_1",
+            "title": {"type": "plain_text", "text": "Survey"},
+            "submit": {"type": "plain_text", "text": "Submit"},
+            "blocks": [
+                {
+                    "type": "input",
+                    "block_id": "input_a",
+                    "label": {"type": "plain_text", "text": "What is your name?"},
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": "name_input"
+                    }
+                },
+                {
+                    "type": "input",
+                    "block_id": "input_b",
+                    "label": {"type": "plain_text", "text": "What is your favorite color?"},
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": "color_input"
+                    }
+                },
+                {
+                    "type": "input",
+                    "block_id": "input_c",
+                    "label": {"type": "plain_text", "text": "What are your hopes and dreams?"},
+                    "element": {
+                        "type": "plain_text_input",
+                        "action_id": "dreamy_input",
+                        "multiline": True
+                    }
+                }
+            ]
+        }
+    )
 
 
-@app.command("/addField")
-def add_field(ack, body):
-    user_id = body["user_id"]
-    channel_id = body["channel_id"]
-    key = body["key"]
-    value = body["value"]
-    client.db.collection.insert_one(
-        {"user_id": user_id, "channel_id": channel_id, "key": key, "value": value})
-    ack(f"Added field to the database: {key} = {value}")
+# Handle a view_submission request
+@app.view("view_1")
+def handle_submission(ack, body, client, view, logger):
+    # Assume there's an input block with `input_c` as the block_id and `dreamy_input`
+    hopes_and_dreams = view["state"]["values"]["input_c"]["dreamy_input"]["value"]
+    user = body["user"]["id"]
+    # Validate the inputs
+    errors = {}
+    if hopes_and_dreams is not None and len(hopes_and_dreams) <= 5:
+        errors["input_c"] = "The value must be longer than 5 characters"
+    if len(errors) > 0:
+        ack(response_action="errors", errors=errors)
+        return
+    # Acknowledge the view_submission request and close the modal
+    ack()
+    # Do whatever you want with the input data - here we're saving it to a DB
+    # then sending the user a verification of their submission
+
+    # Message to send user
+    msg = ""
+    try:
+        # Save to DB
+        msg = f"Your submission of {hopes_and_dreams} was successful"
+    except Exception as e:
+        # Handle error
+        msg = "There was an error with your submission"
+
+    # Message the user
+    try:
+        client.chat_postMessage(channel=user, text=msg)
+    except e:
+        logger.exception(f"Failed to post a message {e}")
 
 
 if __name__ == "__main__":
