@@ -4,3 +4,4 @@ Flask-PyMongo
 slack_sdk
 slack_bolt
 dotenv
+pika==1.1.0
