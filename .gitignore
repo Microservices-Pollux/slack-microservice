@@ -1,3 +1,5 @@
-.venv
-.env
-__pycache__
+back/.venv
+back/.env
+back/__pycache__
+front/node_modules
+front/.env

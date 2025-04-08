@@ -20,3 +20,6 @@ def consume():
     print(' [*] Waiting for messages:')
     channel.start_consuming()
     connection.close()
+
+
+consume()
