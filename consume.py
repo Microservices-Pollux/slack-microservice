@@ -9,7 +9,7 @@ def consume():
     params = pika.URLParameters(url)
     connection = pika.BlockingConnection(params)
     channel = connection.channel()  # start a channel
-    channel.queue_declare(queue='hello')  # Declare a queue
+    channel.queue_declare(queue='hello', durable=True)  # Declare a queue
 
     def callback(ch, method, properties, body):
         print(" [x] Received " + str(body))
