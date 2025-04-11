@@ -1,53 +1,40 @@
 <script lang="ts">
-  import Input from '../components/Input.svelte'
-  import Button from '../components/Button.svelte'
-  import Select from '../components/Select.svelte';
-  import { Item }  from '../interfaces/Item';
-  
-  let key: string = $state('')
-  let value: string = $state('')
-  let type: string = $state('')
+  import Input from "../components/Input.svelte";
+  import Button from "../components/Button.svelte";
+  import Select from "../components/Select.svelte";
+  import { INPUT_TYPES } from "../constants/inputTypes";
+  import { store } from "../store.svelte";
 
-  const handleTypeChange = (item: Item) => {
-    console.log(item)
-    type = item.name
-  }
+  let key: string = $state("");
+  let value: string = $state("");
+  let type: string = $state("");
 
   const submit = (e: Event) => {
-    // TODO handle form submission
-    e.preventDefault()
-  }
+    store.services
+      .resource("fields")
+      .create({ key, value, type })
+      .then((data: any) => {
+        if (data.status === 200) {
+          key = "";
+          value = "";
+          type = "";
+        }
+      });
+    // TODO add refetch on submit
+  };
 </script>
 
-<form>
-  <div class="mt-10 py-10 px-16 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3">
-    <div> 
-      <Input 
-        label="Key"
-        name="key"
-        type="text"
-        bind:value={key}
-        />
-    </div>
-    <div> 
-      <Input
-        label="Value"
-        name="value"
-        type="text"
-        bind:value={value}
-        />
-    </div>
-    <div> 
-      <Select 
-        label="Type"
-        name="type"
-        value={type}
-        onClick={handleTypeChange}
-        /> 
-    </div>
-    <div class="col-span-3 flex items-center justify-end">
-      <Button label="Guardar" onclick={submit} />
-    </div>
+<div class="mt-10 px-16 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3">
+  <div>
+    <Input label="Key" name="key" type="text" bind:value={key} />
   </div>
-</form>
-  
+  <div>
+    <Input label="Value" name="value" type="text" bind:value />
+  </div>
+  <div>
+    <Select label="Type" bind:value={type} options={INPUT_TYPES} />
+  </div>
+  <div class="col-span-3 flex items-center justify-end">
+    <Button label="Guardar" onClick={submit} />
+  </div>
+</div>
