@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
 from  mongo import get_mongo_client
+from bson.objectid import ObjectId
 import os
 from dotenv import load_dotenv
 load_dotenv()
@@ -18,10 +19,10 @@ def fields():
         collection = db["fields"]
 
         fields = collection.find()
-        print(fields)
         result = []
         for field in fields:
             result.append({
+                "id": str(field["_id"]),
                 "key": field["key"],
                 "type": field["type"],
                 "value": field["value"],
@@ -44,5 +45,17 @@ def create():
     else:
         return {"status": "error", "message": "Could not connect to database"}, 500
     
+@app.route('/api/fields/<id>', methods=['DELETE'])
+def delete(id):
+    client = get_mongo_client()
+
+    if client:
+        db = client["slack"]
+        collection = db["fields"]
+        result = collection.delete_one({"_id": ObjectId(id)})
+        if result.deleted_count > 0:
+            return {"status": "success"}, 200
+        else:
+            return {"status": "error", "message": "Field not found"}, 404
 
 

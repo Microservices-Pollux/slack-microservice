@@ -10,6 +10,7 @@
   let type: string = $state("");
 
   const submit = async (e: Event) => {
+    store.isLoading = true;
     store.services
       .resource("fields")
       .create({ key, value, type })
@@ -22,6 +23,7 @@
           .get()
           .then((data: any) => {
             store.fields = data.fields;
+            store.isLoading = false;
           });
       });
   };
