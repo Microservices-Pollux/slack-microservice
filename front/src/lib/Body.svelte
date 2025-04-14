@@ -1,16 +1,13 @@
 <script lang="ts">
-  import type { Field } from "../interfaces/Field";
   import Table from "../components/Table.svelte";
   import { store } from "../store.svelte";
-
-  let fields: Field[] = $state([]);
 
   $effect(() => {
     store.services
       .resource("fields")
       .get()
       .then((data: any) => {
-        fields = data.fields;
+        store.fields = data.fields;
       });
   });
 </script>
@@ -22,7 +19,7 @@
 {/snippet}
 
 {#snippet rows()}
-  {#each fields as field}
+  {#each store.fields as field}
     <tr class="odd:bg-white even:bg-gray-50 border-gray-200">
       <th scope="col" class="px-6 py-3">
         {field.key}

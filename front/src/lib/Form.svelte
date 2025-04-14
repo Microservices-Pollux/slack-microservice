@@ -9,18 +9,21 @@
   let value: string = $state("");
   let type: string = $state("");
 
-  const submit = (e: Event) => {
+  const submit = async (e: Event) => {
     store.services
       .resource("fields")
       .create({ key, value, type })
-      .then((data: any) => {
-        if (data.status === 200) {
-          key = "";
-          value = "";
-          type = "";
-        }
+      .then(() => {
+        key = "";
+        value = "";
+        type = "";
+        store.services
+          .resource("fields")
+          .get()
+          .then((data: any) => {
+            store.fields = data.fields;
+          });
       });
-    // TODO add refetch on submit
   };
 </script>
 
