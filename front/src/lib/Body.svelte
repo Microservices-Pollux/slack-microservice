@@ -62,6 +62,6 @@
   {/each}
 {/snippet}
 
-<div class="px-16">
+<div class="px-16 my-6">
   <Table title="Fields" {headers} {rows} />
 </div>
