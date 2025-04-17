@@ -65,7 +65,7 @@ def handle_button_click(ack, body, client):
             blocks.append({
                 "type": "input",
                 "block_id": field["key"],
-                "label": {"type": "plain_text", "text": field["value"]},
+                "label": {"type": "plain_text", "text": field["key"]},
                 "element": {
                     "type": "plain_text_input",
                     "action_id": field["key"]
