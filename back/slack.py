@@ -116,6 +116,22 @@ def handle_button_click(ack, body, client):
                     "placeholder": {"type": "plain_text", "text": field["value"]}
                 }
             })
+        elif field["type"] == "checkbox":
+            blocks.append({
+                "type": "input",
+                "block_id": field["key"],
+                "label": {"type": "plain_text", "text": field["key"]},
+                "element": {
+                    "type": "checkboxes",
+                    "action_id": field["key"],
+                    "options": [
+                        {
+                            "text": {"type": "plain_text", "text": field["key"]},
+                            "value": field["value"]
+                        }
+                    ],
+                }
+            })
 
     client.views_open(
         trigger_id=body["trigger_id"],

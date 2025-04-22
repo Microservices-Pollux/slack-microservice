@@ -6,4 +6,5 @@ export const INPUT_TYPES: Item[] = [
   { name: "file" },
   { name: "date" },
   { name: "multiline" },
+  { name: "checkbox" },
 ];
