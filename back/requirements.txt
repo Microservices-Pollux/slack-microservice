@@ -6,3 +6,4 @@ slack_sdk
 slack_bolt
 dotenv
 pika==1.1.0
+serverless_wsgi
