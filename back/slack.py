@@ -121,6 +121,7 @@ def handle_button_click(ack, body, client):
                 "type": "input",
                 "block_id": field["key"],
                 "label": {"type": "plain_text", "text": field["key"]},
+                "optional": True,
                 "element": {
                     "type": "checkboxes",
                     "action_id": field["key"],
