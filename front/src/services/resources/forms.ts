@@ -1,7 +1,7 @@
 import { Base } from "../base";
 
-export class Fields extends Base {
+export class Forms extends Base {
   constructor() {
-    super("fields");
+    super("forms");
   }
 }

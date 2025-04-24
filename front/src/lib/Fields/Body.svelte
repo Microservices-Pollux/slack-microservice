@@ -1,15 +1,18 @@
 <script lang="ts">
-  import type { Field } from "../interfaces/Field";
+  import type { Field } from "../../interfaces/Field";
   import { onMount } from "svelte";
-  import { store } from "../store.svelte";
-  import Table from "../components/Table.svelte";
+  import { store } from "../../store.svelte";
+  import Table from "../../components/Table.svelte";
+
+  let { route } = $props();
+  const formId = route.result.querystring.original["form-id"];
 
   onMount(() => {
     store.services
-      .resource("fields")
-      .get()
+      .resource("forms")
+      .show(formId)
       .then((data: any) => {
-        store.fields = data.fields;
+        store.fields = data.form.fields;
         store.isLoading = false;
       });
   });
@@ -17,14 +20,16 @@
   const handleDelete = (field: Field): void => {
     store.isLoading = true;
     store.services
-      .resource("fields")
-      .delete(field.id)
+      .resource("formFields")
+      //check typescript error
+      .setFormId(formId)
+      .delete(field._id)
       .then(() => {
         store.services
-          .resource("fields")
-          .get()
+          .resource("forms")
+          .show(formId)
           .then((data: any) => {
-            store.fields = data.fields;
+            store.fields = data.form.fields;
             store.isLoading = false;
           });
       });

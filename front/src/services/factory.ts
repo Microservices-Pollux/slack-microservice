@@ -1,7 +1,9 @@
-import { Fields } from "./resources/fields";
+import { formFields } from "./resources/form-fields";
+import { Forms } from "./resources/forms";
 
 const services = {
-  fields: new Fields(),
+  formFields: new formFields(),
+  forms: new Forms(),
 };
 
 type ServiceName = keyof typeof services;

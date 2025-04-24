@@ -23,8 +23,23 @@ export class Base {
     return route;
   }
 
-  get(id?: string, params: any = {}): Promise<any> {
+  get(params: any = {}): Promise<any> {
     const url = new URL(`${this.baseUrl}/${this.getResource(params)}`);
+    Object.keys(params).forEach((key) => {
+      url.searchParams.set(key, params[key]);
+    });
+    return fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => data);
+  }
+
+  show(id: string, params: any = {}) {
+    const url = new URL(`${this.baseUrl}/${this.getResource(params)}/${id}`);
     Object.keys(params).forEach((key) => {
       url.searchParams.set(key, params[key]);
     });

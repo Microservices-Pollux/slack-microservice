@@ -1,5 +1,5 @@
 export interface Field {
-  id: string;
+  _id: string;
   key: string;
   value: string;
   type: string;
