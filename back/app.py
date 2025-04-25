@@ -81,7 +81,7 @@ def form_attach_fields(id):
         if not form:
             return {"status": "error", "message": "Form not found"}, 404
         
-        if not isinstance(form["fields"], list):
+        if "fields" not in form or not isinstance(form["fields"], list):
             collection.update_one({"_id": ObjectId(id)}, {"$set": {"fields": []}})
         
         newField = {
