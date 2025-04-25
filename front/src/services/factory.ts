@@ -6,9 +6,13 @@ const services = {
   forms: new Forms(),
 };
 
-type ServiceName = keyof typeof services;
-type Service = (typeof services)[ServiceName];
+type ServiceMap = {
+  formFields: formFields;
+  forms: Forms;
+};
+
+type ServiceName = keyof ServiceMap;
 
 export default {
-  resource: (name: ServiceName): Service => services[name],
+  resource: <T extends ServiceName>(name: T): ServiceMap[T] => services[name],
 };

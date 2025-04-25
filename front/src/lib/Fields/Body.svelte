@@ -21,7 +21,6 @@
     store.isLoading = true;
     store.services
       .resource("formFields")
-      //check typescript error
       .setFormId(formId)
       .delete(field._id)
       .then(() => {
