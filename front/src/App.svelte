@@ -1,6 +1,7 @@
 <script lang="ts">
   import Fields from "./lib/Fields/Index.svelte";
   import Forms from "./lib/Forms/Index.svelte";
+  import Navbar from "./lib/Navbar/Index.svelte";
   import Loader from "./components/Loader.svelte";
   import { store } from "./store.svelte";
   import { Router, type RouteConfig } from "@mateothegreat/svelte5-router";
@@ -25,4 +26,5 @@
   </div>
 {/if}
 
+<Navbar />
 <Router {routes} />
