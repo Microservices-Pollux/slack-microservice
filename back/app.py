@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask_cors import CORS, cross_origin
 from  mongo import get_mongo_client
 from bson.objectid import ObjectId
@@ -21,6 +21,10 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+@app.route('/')
+def index():
+    return "Hello, World!"
+
 
 @app.route('/api/forms')
 def forms_index():
@@ -33,7 +37,7 @@ def forms_index():
         forms = collection.find()
         result = [map_object_ids(form) for form in forms]
 
-        return {"forms": result}
+        return {"forms": result}, 200
 
 @app.route('/api/forms/<id>')
 def forms_show(id):

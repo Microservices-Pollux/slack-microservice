@@ -1,5 +1,6 @@
 back/.venv
 back/.env
 back/__pycache__
+back/build
 front/node_modules
 front/.env
