@@ -3,6 +3,7 @@ import os
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_bolt import App
 from  mongo import get_mongo_client
+import pprint
 
 
 load_dotenv()
@@ -12,6 +13,41 @@ socket_token = os.environ["SOCKET_TOKEN"]
 
 app = App(token=bot_token)
 
+
+def parse_form(form):
+    result = []
+
+    for key, value in form.items():
+        field = value.get(key, {})
+        field_type = field.get("type")
+
+        field_value = None
+
+        if field_type == "plain_text_input":
+            field_value = field.get("value")
+        elif field_type == "number_input":
+            field_value = field.get("value")
+        elif field_type == "file_input":
+            field_value = [
+                {"name": file.get("name"), "url": file.get("url_private")}
+                for file in field.get("files", [])
+            ]
+        elif field_type == "datepicker":
+            field_value = field.get("selected_date")
+        elif field_type == "checkboxes":
+            field_value = [
+                option.get("value")
+                for option in field.get("selected_options", [])
+            ]
+
+        # Add the parsed field to the result
+        result.append({
+            "key": key,
+            "type": field_type,
+            "value": field_value,
+        })
+
+    return result
 
 @app.message("hello")
 def message_hello(message, say):
@@ -137,7 +173,8 @@ def handle_submission(ack, body, client, view, logger):
     user = body["user"]["id"]
 
     # TODO - Send to some micro service
-    print(str(view["state"]["values"]))
+    formData = parse_form(view["state"]["values"])
+    pprint.pp(formData)
 
     msg = f"Your submission was successful"
 
